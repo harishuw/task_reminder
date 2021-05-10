@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Task Reminder</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="pop.js"></script>
+        <link rel="stylesheet" href="bootstrap.min.css"/>       
+    </head>
+    <body>
+        <div class="container">
+            <div id="menus">
+                <a href="#addtasks" class="btn btn-default btn-xs active">Add <i class="glyphicon glyphicon-plus"></i></a> 
+                <a href="#viewtasks" class="btn btn-default btn-xs ">Tasks <i class="glyphicon glyphicon-tasks"></i></a>
+                <a id="jotit" class="btn btn-default btn-xs ">Jotit <img src="jotit.png"/></a>
+            </div>
+            <div id="addtasks" class="tabi">
+                <form class="form-horizontal">
+                    <div class="form-group">
+                        <label for="message" class="col-sm-2 control-label">Remind me about</label>
+                        <div class="col-sm-10">
+                            <input type="text" name="message" id="message" class="form-control" placeholder="Enter Task"/>
+                        </div>
+                    </div>
+                    <div class="form-group mins">
+                        <label for="minutes" class="col-sm-2 control-label">In<input type="radio" name="type" value="mins" checked/></label>
+                        <div class="col-sm-10">
+                            <input type="number" name="minutes" id="minutes" class="form-control" placeholder="Minutes"/>
+                        </div>
+                    </div>
+                    <div class="form-group dts">
+                        <label for="minutes" class="col-sm-2 control-label">Or On <input type="radio" name="type" value="date"/></label>
+                        <div class="col-sm-6">
+                            <input type="date" name="date" id="date" class="form-control" placeholder="date" disabled/>
+                        </div>
+                        <div class="col-sm-4">
+                            <select name="hours" id="hours" class="form-control pull-left" disabled></select>
+                            <select name="minutes" id="mins" class="form-control pull-left" disabled></select>
+                            <select name="minutes" id="apm" class="form-control pull-left" disabled>
+                                <option value="am">AM</option>
+                                <option value="pm">PM</option>
+                            </select>
+                        </div>
+                    </div>
+                    <a id="remind" class="btn btn-sm btn-primary"><i class="glyphicon glyphicon-bell"></i> Add Reminder</a> 
+                </form>
+            </div>
+            <div id="viewtasks" class="tabi hideit">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div id='delete_confirm' class="alert alert-danger ">Are you sure?<br/>
+                            <a class="btn btn-link alert-link" id='confirm_delete'>Yes</a> <a id='confirm_delete_no' class="btn btn-link alert-link">No </a>
+                        </div>
+                        <table class="table table-striped">
+                            <thead><th>Task</th><th>Time</th><th></th></thead>
+                            <tbody>
+                                <tr><td colspan="3">No Tasks to show</td> </tr>
+                            </tbody>
+                        </table>
+                        <input type="date" class="form-control invisible" disabled="">
+                    </div>
+                </div>
+            </div>                   
+           <br/>
+           <span id="curtime"></span>
+        </div>      
+    </body>
+</html>
