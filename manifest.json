@@ -1,19 +1,18 @@
 {
     "name": "Task Reminder",
-    "short_name":"TR v2.2",
-    "version": "2.2",
-    "manifest_version": 2,
+    "short_name":"TR v3.0",
+    "version": "3.0",
+    "manifest_version": 3,
     "author":"Harish U Warrier",
     "description": "A Simple Task Reminder",
     "icons": { 
         "48": "icon.png" 
     },
-    "background": {
-        "persistent": true,
-        "scripts": ["bg.js"]       
+    "background": {       
+        "service_worker": "service_worker.js"       
     },
     "permissions": ["storage", "notifications", "alarms"],
-    "browser_action": {
+    "action": {
         "default_title": "Task Reminder",
         "default_icon": "icon.png",
         "default_popup": "popup.html"

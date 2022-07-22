@@ -1,54 +1,85 @@
-var $e=function(sel){
+const $e = function(sel){
     return document.querySelector(sel);
 };
-var $ea=function(sel){
+const $ea = function(sel){
     return document.querySelectorAll(sel);
 };
-var cdilid=0;
-window.onload=function(){    
-    var $elem=$e('#remind');
+
+let cdilid=0;
+
+let app = {
+    init: function(){
+        
+    },
+    setDate: function(form){
+        let now=new Date();
+        let nowhr=now.getHours();
+        let nowmin=now.getMinutes();
+        if(nowhr>12){
+            form.ampm.value='pm';
+            nowhr=nowhr-12;
+        }
+        form.mins.value=nowmin;
+        form.hours.value=nowhr;    
+        form.date.value=now.format("%y-%m-%d");       
+    }
+}
+
+window.onload = function(){    
+ 
+    const form = {
+        "message": document.getElementById("message"),
+        "type": document.getElementsByName("type")[1],
+        "submit": document.getElementById("remind"),
+        "inmin":  document.getElementById("minutes"),
+        "date": document.getElementById("date"),
+        "hours": document.getElementById("hours"),
+        "mins": document.getElementById("mins"),
+        "ampm": document.getElementById("apm"), 
+    };  
     curtime();
     setInterval(curtime,1000);    
-    if(typeof($elem) === 'undefined' || $elem === null){
-        return ;
+    if(typeof(form.submit) === 'undefined' || form.submit === null){
+        return;
     }
-    document.getElementById("remind").onclick = function(e){
-        var data={};
-        data.title="Task Reminder";
-        data.message= document.getElementById("message").value;
-        if(data.message.trim()==""){
-            document.getElementById("message").focus();
+    form.submit.onclick = function(e){
+        let data = {};        
+        data.title = "Task Reminder";
+        data.message = form.message.value;
+        if(data.message.trim() == ""){
+            form.message.focus();
             return;
         }
-        if(document.getElementsByName("type")[1].checked){
-            data.date=document.getElementById("date").value;
-            if(data.date.trim()==""){
-                document.getElementById("date").focus();
+        if(form.type.checked){
+
+            data.date = form.date.value;
+            if(data.date.trim() == ""){
+                form.date.focus();
                 return;
             }
-            data.hours=Number(document.getElementById("hours").value);
-            var apm=document.getElementById("apm").value.trim();
-            if(apm=="pm" && data.hours!=12){
-                data.hours+=12;
-            }else if(apm=="am" && data.hours==12){
-                data.hours=0;
+            data.hours = Number(form.hours.value);
+            var apm = form.ampm.value.trim();
+            if(apm == "pm" && data.hours != 12){
+                data.hours += 12;
+            }else if(apm == "am" && data.hours == 12){
+                data.hours = 0;
             }
-            var time=new Date(data.date);
+            var time = new Date(data.date);
             time.setHours(data.hours);
-            time.setMinutes(Number(document.getElementById("mins").value));
-            data.time=time.valueOf();
-            data.minutes=((data.time-new Date().valueOf())/1000)/60;           
+            time.setMinutes(Number(form.mins.value));
+            data.time = time.valueOf();
+            data.minutes = ((data.time-new Date().valueOf())/1000)/60;           
         }else{
-            data.minutes=document.getElementById("minutes").value;
+            data.minutes = form.inmin.value;
             if(data.minutes.trim()=="" || isNaN(data.minutes)){
-                document.getElementById("minutes").focus();
+                form.inmin.focus();
                 return;
             }
             var time=new Date();
             time.setMinutes(time.getMinutes() + Number(data.minutes));
             data.time=time.valueOf();
         }
-        data.id="task_rem"+data.time;
+        data.id="task_rem" +data.time + new Date().valueOf();
         chrome.runtime.sendMessage(data,function(response) {
             $ea('#menus a')[1].click();
             reset_fields('#message','#minutes','#date');
@@ -61,9 +92,9 @@ window.onload=function(){
     };
     var mins="";
     for(var $i=0;$i<=59;$i++){
-    var j=$i;
-    if($i<10){j="0"+j;}
-      mins+="<option value='"+$i+"'>"+j+"</option>"
+        var j=$i;
+        if($i<10){j="0"+j;}
+        mins+="<option value='"+$i+"'>"+j+"</option>"
     }
     var hrs="";
     for(var $i=1;$i<=12;$i++){
@@ -85,16 +116,7 @@ window.onload=function(){
             }
         };
     }
-    var now=new Date();
-    var nowhr=now.getHours();
-    var nowmin=now.getMinutes();
-    if(nowhr>12){
-        $e('#apm').value='pm';
-        nowhr=nowhr-12;
-    }
-    $e('#mins').value=nowmin;
-    $e('#hours').value=nowhr;    
-    $e("#date").value=now.format("%y-%m-%d");
+    app.setDate(form);
     var cl=$ea('#menus a');
     for(var i=0;i<cl.length;i++){
         cl[i].onclick=function(){
@@ -111,11 +133,7 @@ window.onload=function(){
         }; 
     };
     store_items();
-    init_del();
-    $e("#jotit").onclick=function(){
-        var url="https://chrome.google.com/webstore/detail/jotit-just-jot-it/aoipkhoiccpbmbgbinbplkgdhgmjeiek";
-        chrome.tabs.create({ url: url,active:true });
-    };
+    init_del();   
 };
 function remind(data) { 
   chrome.runtime.sendMessage(data,
@@ -261,8 +279,8 @@ try{
     console.log(e);
 }
 function curtime(){
-    var dt = new Date();
-    $e("#curtime").innerHTML=dt.format("%y-%m-%d %h:%min %APM");
+    let dt = new Date();
+    $e("#curtime").innerHTML = dt.format("%y-%m-%d %h:%min %APM");
 }
 function remaining(dt,id){
     var cdt=new Date().getTime();
