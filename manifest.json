@@ -1,7 +1,7 @@
 {
     "name": "Task Reminder",
-    "short_name":"TR v3.0",
-    "version": "3.0",
+    "short_name":"TR v3.1",
+    "version": "3.1",
     "manifest_version": 3,
     "author":"Harish U Warrier",
     "description": "A Simple Task Reminder",

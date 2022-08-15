@@ -22,6 +22,23 @@ let app = {
         form.mins.value=nowmin;
         form.hours.value=nowhr;    
         form.date.value=now.format("%y-%m-%d");       
+    },
+    curtime(){
+        let dt = new Date();
+        $e("#curtime").innerHTML = dt.format("%y-%m-%d %h:%min %APM");
+    },
+    remaining(dt,id){
+        let cdt = new Date().getTime();
+        let tdt = new Date(dt).getTime();
+        let bal = tdt-cdt;   
+        let remdiv = "";
+        if(bal > 0){
+            let days = Math.floor(bal / (1000 * 60 * 60 * 24));
+            let hours = Math.floor((bal % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            let minutes = Math.floor((bal % (1000 * 60 * 60)) / (1000 * 60));     
+            remdiv = (days>0?days+" Days ":"") + (hours>0?hours+" Hr ":"") + (minutes+" Min") + " Left"; 
+        }  
+        id.innerHTML = remdiv;
     }
 }
 
@@ -37,8 +54,8 @@ window.onload = function(){
         "mins": document.getElementById("mins"),
         "ampm": document.getElementById("apm"), 
     };  
-    curtime();
-    setInterval(curtime,1000);    
+    app.curtime();
+    setInterval(app.curtime, 1000);    
     if(typeof(form.submit) === 'undefined' || form.submit === null){
         return;
     }
@@ -81,11 +98,21 @@ window.onload = function(){
         }
         data.id="task_rem" +data.time + new Date().valueOf();
         chrome.runtime.sendMessage(data,function(response) {
+           console.log(response)
+           var lastError = chrome.runtime.lastError;
+            if (lastError) {
+                setTimeout(function(){
+                    store_items();
+                },1000)
+                console.log(lastError.message);
+            }
             $ea('#menus a')[1].click();
-            reset_fields('#message','#minutes','#date');
+            form.message.value = "";
+            form.inmin.value = "";
+            app.setDate(form);
             store_items();
             setTimeout(function(){
-                 store_items();
+                store_items();
             },1000)
             
         }); 
@@ -135,12 +162,7 @@ window.onload = function(){
     store_items();
     init_del();   
 };
-function remind(data) { 
-  chrome.runtime.sendMessage(data,
-    function(response) {
-     
-    });
-}
+
 function store_items(){   
     chrome.storage.sync.get('tr_items',function(items){
         var td="";
@@ -165,7 +187,7 @@ function store_items(){
             var tm=Number(e.dataset.time);
             if(tm){
                 setInterval(function(){
-                    remaining(tm,e);
+                    app.remaining(tm,e);
                 },1000);                
             }
         });
@@ -231,11 +253,7 @@ function init_del(){
     };
 }
 
-function reset_fields(){
-    for(var i=0;i<arguments.length;i++){
-        $e(arguments[i]).value="";
-    }
-}
+
 function get_all(){
     chrome.notifications.getAll(function(dat){
         console.log(dat);       
@@ -278,20 +296,4 @@ try{
 }catch(e){
     console.log(e);
 }
-function curtime(){
-    let dt = new Date();
-    $e("#curtime").innerHTML = dt.format("%y-%m-%d %h:%min %APM");
-}
-function remaining(dt,id){
-    var cdt=new Date().getTime();
-    var tdt=new Date(dt).getTime();
-    var bal=tdt-cdt;   
-    var remdiv="";
-    if(bal>0){
-        var days = Math.floor(bal / (1000 * 60 * 60 * 24));
-        var hours = Math.floor((bal % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        var minutes = Math.floor((bal % (1000 * 60 * 60)) / (1000 * 60));     
-        remdiv= (days>0?days+" Days ":"")+(hours>0?hours+" Hr ":"")+(minutes+" Min")+" Left"; 
-    }  
-    id.innerHTML=remdiv;
-}
+
